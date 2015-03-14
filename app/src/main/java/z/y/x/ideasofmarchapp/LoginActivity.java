@@ -1,5 +1,6 @@
 package z.y.x.ideasofmarchapp;
 
+import android.os.Looper;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -13,11 +14,16 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.protocol.HTTP;
+import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -63,42 +69,39 @@ public class LoginActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void postData() {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        Callable<String> callable = new Callable<String>() {
-            @Override
-            public String call() {
+ protected void sendJson(final String username, final String pwd) {
+        Thread t = new Thread() {
+
+            public void run() {
+                Looper.prepare(); //For Preparing Message Pool for the child Thread
                 HttpClient client = new DefaultHttpClient();
-                HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
+                HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000); //Timeout Limit
+                HttpResponse response;
+                JSONObject json = new JSONObject();
+
                 try {
-                    //Server connection
-                    HttpPost post = new HttpPost("http://10.11.173.205/iom/helloworld.php");
-                    // Add your data
-                    List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-                    nameValuePairs.add(new BasicNameValuePair("id", "12345"));
-                    nameValuePairs.add(new BasicNameValuePair("stringdata", "Hi"));
-                    post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-                    // Execute HTTP Post Request
-                    HttpResponse response = client.execute(post);
-                    String postRes = response.toString();
-                    return postRes;
-                } catch (ClientProtocolException e) {
-                    // TODO Auto-generated catch block
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
+                    HttpPost post = new HttpPost(http://10.11.173.205/iom/helloworld.php);
+                    json.put("username", username);
+                    json.put("password", pwd);
+                    StringEntity se = new StringEntity( json.toString());  
+                    se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+                    post.setEntity(se);
+                    response = client.execute(post);
+
+                    /*Checking response */
+                    if(response!=null){
+                        InputStream in = response.getEntity().getContent(); //Get the data in the entity
+                    }
+
+                } catch(Exception e) {
+                    e.printStackTrace();
+                    createDialog("Error", "Cannot Estabilish Connection");
                 }
-                return null;
+
+                Looper.loop(); //Loop in the message queue
             }
         };
-        Future<String> future = executor.submit(callable);
-        // future.get() returns 2
-        try{
-           responseTextView.setText(future.get());
-        }
-        catch(Exception e){
 
-        }
-
-        executor.shutdown();
+        t.start();      
     }
 }
