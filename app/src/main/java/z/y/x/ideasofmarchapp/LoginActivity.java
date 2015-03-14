@@ -6,6 +6,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -15,12 +16,15 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 
 public class LoginActivity extends ActionBarActivity {
@@ -60,30 +64,41 @@ public class LoginActivity extends ActionBarActivity {
     }
 
     public void postData() {
-        // Create a new HttpClient and Post Header
-        Thread t = new Thread(){
-            public void run(TextView rTextView){
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Callable<String> callable = new Callable<String>() {
+            @Override
+            public String call() {
                 HttpClient client = new DefaultHttpClient();
                 HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
                 try {
                     //Server connection
-                    HttpPost httppost = new HttpPost("http://10.11.173.205/iom/helloworld.php");
+                    HttpPost post = new HttpPost("http://10.11.173.205/iom/helloworld.php");
                     // Add your data
                     List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-                    nameValuePairs.add(new BasicNameValuePair("userName", "pesq8691"));
-                    nameValuePairs.add(new BasicNameValuePair("passWord", "passwordlol"));
-                    httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-
+                    nameValuePairs.add(new BasicNameValuePair("id", "12345"));
+                    nameValuePairs.add(new BasicNameValuePair("stringdata", "Hi"));
+                    post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
                     // Execute HTTP Post Request
-                    HttpResponse response = client.execute(httppost);
-                    rTextView.setText(response.toString());
+                    HttpResponse response = client.execute(post);
+                    String postRes = response.toString();
+                    return postRes;
                 } catch (ClientProtocolException e) {
                     // TODO Auto-generated catch block
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                 }
+                return null;
             }
         };
-        t.start();
+        Future<String> future = executor.submit(callable);
+        // future.get() returns 2
+        try{
+           responseTextView.setText(future.get());
+        }
+        catch(Exception e){
+
+        }
+
+        executor.shutdown();
     }
 }
