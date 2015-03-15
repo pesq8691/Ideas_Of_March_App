@@ -49,7 +49,7 @@ public class LoginActivity extends ActionBarActivity {
                 public void onClick(View v) {
                     sendJson(userName.getText().toString(), passWord.getText().toString(), responseTextView);
                     //intent.putStringArrayListExtra("Info",new ArrayList<String>());
-                    //startActivity(new Intent(LoginActivity.this, DisplayButtonActivity.class));
+                    startActivity(new Intent(LoginActivity.this, DisplayButtonActivity.class));
 
 
                 }
