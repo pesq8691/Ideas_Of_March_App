@@ -1,51 +1,58 @@
 package z.y.x.ideasofmarchapp;
 
+import android.content.Intent;
 import android.os.Looper;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.protocol.HTTP;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-
 
 public class LoginActivity extends ActionBarActivity {
     TextView responseTextView;
-
+    EditText userName;
+    EditText passWord;
+    Button loginbutton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
 
         responseTextView = (TextView) findViewById(R.id.responseTextView);
+        userName = (EditText) findViewById(R.id.username);
+        passWord = (EditText) findViewById(R.id.password);
+        loginbutton = (Button) findViewById(R.id.btnLogin);
 
-        postData();
+        loginbutton.setOnClickListener(new View.OnClickListener()
+            {
+                public void onClick(View v) {
+                    sendJson(userName.getText().toString(), passWord.getText().toString(), responseTextView);
+                    //intent.putStringArrayListExtra("Info",new ArrayList<String>());
+                    startActivity(new Intent(LoginActivity.this, DisplayButtonActivity.class));
+
+
+                }
+            }
+        );
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -69,25 +76,31 @@ public class LoginActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
- protected void sendJson(final String username, final String pwd) {
+ protected void sendJson(final String username, final String pwd, final TextView textView) {
         Thread t = new Thread() {
 
             public void run() {
                 Looper.prepare(); //For Preparing Message Pool for the child Thread
-                HttpClient client = new DefaultHttpClient();
-                HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000); //Timeout Limit
-                HttpResponse response;
-                JSONObject json = new JSONObject();
+
+
 
                 try {
-                    HttpPost post = new HttpPost(http://10.11.173.205/iom/helloworld.php);
+                    HttpClient client = new DefaultHttpClient();
+                    JSONObject json = new JSONObject();
                     json.put("username", username);
-                    json.put("password", pwd);
-                    StringEntity se = new StringEntity( json.toString());  
-                    se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-                    post.setEntity(se);
-                    response = client.execute(post);
-
+                    json.accumulate("password",pwd);
+                    //String js = json.toString();
+                    InputStream inputStream = null;
+                    StringEntity se = new StringEntity(json.toString(), "UTF-8");
+                    se.setContentType("application/json; charset=UTF-8");
+                    HttpPost temp = new HttpPost("http://10.11.140.177/~edsan/serverCode/helloworld.php"); //10.11.173.205/iom/helloworld.php
+                    temp.setEntity(se);
+                    HttpPost post = temp;
+                    post.setHeader("Accept", "application/json");
+                    post.setHeader("Content-type", "application/json");
+                    HttpResponse response = client.execute(post);
+                    inputStream = response.getEntity().getContent();
+                    textView.setText(convertInputStreamToString(inputStream));
                     /*Checking response */
                     if(response!=null){
                         InputStream in = response.getEntity().getContent(); //Get the data in the entity
@@ -95,7 +108,7 @@ public class LoginActivity extends ActionBarActivity {
 
                 } catch(Exception e) {
                     e.printStackTrace();
-                    createDialog("Error", "Cannot Estabilish Connection");
+                    //createDialog("Error", "Cannot Estabilish Connection");
                 }
 
                 Looper.loop(); //Loop in the message queue
@@ -103,5 +116,17 @@ public class LoginActivity extends ActionBarActivity {
         };
 
         t.start();      
+    }
+
+    private static String convertInputStreamToString(InputStream inputStream) throws IOException{
+        BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
+        String line = "";
+        String result = "";
+        while((line = bufferedReader.readLine()) != null)
+            result += line;
+
+        inputStream.close();
+        return result;
+
     }
 }
