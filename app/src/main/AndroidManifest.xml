@@ -26,6 +26,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="z.y.x.ideasofmarchapp.LoginActivity" />
         </activity>
+        <activity
+            android:name=".Assignments"
+            android:label="@string/title_activity_assignments" >
+        </activity>
     </application>
 
 </manifest>
