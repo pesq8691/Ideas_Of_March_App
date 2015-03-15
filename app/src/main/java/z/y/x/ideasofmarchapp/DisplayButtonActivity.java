@@ -3,17 +3,31 @@ package z.y.x.ideasofmarchapp;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import org.json.JSONObject;
 
 
 public class DisplayButtonActivity extends ActionBarActivity {
 
+    private JSONObject jsonObject = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_button);
-        //Intent intent = getIntent();
+        Intent intent = getIntent();
+        Bundle b = intent.getExtras();
+        String obj = b.getString("JSON");
+        try{
+            jsonObject = new JSONObject(obj);
+            Log.i("Classes: ", jsonObject.get("classes").toString());
+            Log.i("assignmentGrade: ", jsonObject.get("assignmentGrade").toString());
+            Log.i("assignments: ", jsonObject.get("assignments").toString());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 

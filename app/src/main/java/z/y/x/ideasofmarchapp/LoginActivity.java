@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Looper;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.format.Time;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,7 +12,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import com.loopj.android.http.*;
 
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -36,6 +39,9 @@ public class LoginActivity extends ActionBarActivity {
     EditText userName;
     EditText passWord;
     Button loginbutton;
+    AsyncHttpClient client = new AsyncHttpClient();
+    protected String returnString = "";
+    protected Object mResults = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,17 +52,38 @@ public class LoginActivity extends ActionBarActivity {
         passWord = (EditText) findViewById(R.id.password);
         loginbutton = (Button) findViewById(R.id.btnLogin);
 
+
         loginbutton.setOnClickListener(new View.OnClickListener()
             {
                 public void onClick(View v) {
-                    sendJson(userName.getText().toString(), passWord.getText().toString(), responseTextView);
-                    //intent.putStringArrayListExtra("Info",new ArrayList<String>());
-                    startActivity(new Intent(LoginActivity.this, DisplayButtonActivity.class));
+                    RequestParams params = new RequestParams();
+                    params.put("username", userName.getText().toString());
+                    params.put("password", passWord.getText().toString());
+                    client.post("http://10.11.140.177/~edsan/IOM_iLearnDaily_DataBase/jsamples.php",params, new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            super.onSuccess(statusCode, headers, response);
+                            Log.i("response",response.toString());
+                           Intent i = new Intent(LoginActivity.this, DisplayButtonActivity.class);
+                           i.putExtra("JSON", response.toString());
+                           startActivity(i);
+                        }
 
-
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        }
+                    });
+                    //sendJson(userName.getText().toString(), passWord.getText().toString(), responseTextView);
+//
+//
+//                      Intent i = new Intent(LoginActivity.this, DisplayButtonActivity.class);
+//                      i.putExtra("JSON", mResults);
+//                      startActivity(i);
                 }
             }
         );
+
     }
 
     @Override
@@ -93,7 +120,7 @@ public class LoginActivity extends ActionBarActivity {
                     HttpClient client = new DefaultHttpClient();
                     List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
                     InputStream inputStream = null;
-                    HttpPost post = new HttpPost("http://10.11.173.205/iom/helloworld.php");
+                    HttpPost post = new HttpPost("http://10.11.140.177/~edsan/IOM_iLearnDaily_DataBase/jsamples.php");
 
                     nameValuePairs.add(new BasicNameValuePair("username", username));
                     nameValuePairs.add(new BasicNameValuePair("password", pwd));
@@ -106,6 +133,7 @@ public class LoginActivity extends ActionBarActivity {
                     /*Checking response */
                     if(response!=null){
                         InputStream in = response.getEntity().getContent(); //Get the data in the entity
+                        mResults = in.toString();
                     }
 
                 } catch(Exception e) {
@@ -117,7 +145,7 @@ public class LoginActivity extends ActionBarActivity {
             }
         };
 
-        t.start();      
+        t.start();
     }
 
     private static String convertInputStreamToString(InputStream inputStream) throws IOException{
