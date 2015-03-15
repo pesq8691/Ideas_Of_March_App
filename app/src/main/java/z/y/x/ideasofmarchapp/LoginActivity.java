@@ -13,10 +13,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -46,7 +49,7 @@ public class LoginActivity extends ActionBarActivity {
                 public void onClick(View v) {
                     sendJson(userName.getText().toString(), passWord.getText().toString(), responseTextView);
                     //intent.putStringArrayListExtra("Info",new ArrayList<String>());
-                    startActivity(new Intent(LoginActivity.this, DisplayButtonActivity.class));
+                    //startActivity(new Intent(LoginActivity.this, DisplayButtonActivity.class));
 
 
                 }
@@ -86,18 +89,15 @@ public class LoginActivity extends ActionBarActivity {
 
                 try {
                     HttpClient client = new DefaultHttpClient();
-                    JSONObject json = new JSONObject();
-                    json.put("username", username);
-                    json.accumulate("password",pwd);
-                    //String js = json.toString();
+                    List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
                     InputStream inputStream = null;
-                    StringEntity se = new StringEntity(json.toString(), "UTF-8");
-                    se.setContentType("application/json; charset=UTF-8");
-                    HttpPost temp = new HttpPost("http://10.11.140.177/~edsan/serverCode/helloworld.php"); //10.11.173.205/iom/helloworld.php
-                    temp.setEntity(se);
-                    HttpPost post = temp;
-                    post.setHeader("Accept", "application/json");
-                    post.setHeader("Content-type", "application/json");
+                    HttpPost post = new HttpPost("http://10.11.173.205/iom/helloworld.php");
+
+                    nameValuePairs.add(new BasicNameValuePair("username", username));
+                    nameValuePairs.add(new BasicNameValuePair("password", pwd));
+                    post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+                    // Execute HTTP Post Request
                     HttpResponse response = client.execute(post);
                     inputStream = response.getEntity().getContent();
                     textView.setText(convertInputStreamToString(inputStream));
@@ -108,7 +108,7 @@ public class LoginActivity extends ActionBarActivity {
 
                 } catch(Exception e) {
                     e.printStackTrace();
-                    //createDialog("Error", "Cannot Estabilish Connection");
+                    Log.i("Error", "Cannot Estabilish Connection");
                 }
 
                 Looper.loop(); //Loop in the message queue
