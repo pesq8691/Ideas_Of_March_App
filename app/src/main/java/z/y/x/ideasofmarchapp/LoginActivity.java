@@ -29,6 +29,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+//log in activity page
+
 public class LoginActivity extends ActionBarActivity {
     TextView responseTextView;
     EditText userName;
