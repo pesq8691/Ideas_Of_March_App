@@ -30,6 +30,10 @@
             android:name=".Assignments"
             android:label="@string/title_activity_assignments" >
         </activity>
+        <activity
+            android:name=".Buttom"
+            android:label="@string/title_activity_buttom" >
+        </activity>
     </application>
 
 </manifest>

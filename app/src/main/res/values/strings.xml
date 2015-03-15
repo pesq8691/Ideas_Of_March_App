@@ -7,4 +7,5 @@
     <string name="title_activity_display_button">DisplayButtonActivity</string>
     <string name="title_activity_assignments">Assignments</string>
     <string name="assignments">AssignmentsDue</string>
+    <string name="title_activity_buttom">Buttom</string>
 </resources>
