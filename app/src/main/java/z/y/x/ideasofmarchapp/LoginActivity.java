@@ -1,10 +1,9 @@
 package z.y.x.ideasofmarchapp;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Looper;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
-import android.text.format.Time;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,7 +11,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import com.loopj.android.http.*;
+
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
@@ -20,7 +22,6 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
@@ -59,11 +60,11 @@ public class LoginActivity extends ActionBarActivity {
                     RequestParams params = new RequestParams();
                     params.put("username", userName.getText().toString());
                     params.put("password", passWord.getText().toString());
-                    client.post("http://10.11.140.177/~edsan/IOM_iLearnDaily_DataBase/jsamples.php",params, new JsonHttpResponseHandler() {
+                    client.post("http://10.11.173.205/iom/IOM_iLearnDaily_DataBase/userCheck.php",params, new JsonHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                            super.onSuccess(statusCode, headers, response);
-                            Log.i("response",response.toString());
+                           super.onSuccess(statusCode, headers, response);
+                           Log.i("response",response.toString());
                            Intent i = new Intent(LoginActivity.this, DisplayButtonActivity.class);
                            i.putExtra("JSON", response.toString());
                            startActivity(i);
@@ -72,6 +73,7 @@ public class LoginActivity extends ActionBarActivity {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                             super.onFailure(statusCode, headers, throwable, errorResponse);
+//                            Log.i("ERROR", errorResponse.toString());
                         }
                     });
                     //sendJson(userName.getText().toString(), passWord.getText().toString(), responseTextView);
