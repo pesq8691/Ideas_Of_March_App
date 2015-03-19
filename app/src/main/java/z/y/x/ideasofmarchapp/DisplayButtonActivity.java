@@ -22,9 +22,9 @@ public class DisplayButtonActivity extends ActionBarActivity {
         String obj = b.getString("JSON");
         try{
             jsonObject = new JSONObject(obj);
-            Log.i("Classes: ", jsonObject.get("classes").toString());
-            Log.i("assignmentGrade: ", jsonObject.get("assignmentGrade").toString());
-            Log.i("assignments: ", jsonObject.get("assignments").toString());
+            Log.i("Classes: ", jsonObject.get("className").toString());
+            Log.i("Assignments: ", jsonObject.get("assignmentName").toString());
+            Log.i("Due dates: ", jsonObject.get("date").toString());
         }catch (Exception e){
             e.printStackTrace();
         }
