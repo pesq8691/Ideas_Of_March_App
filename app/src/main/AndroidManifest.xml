@@ -19,7 +19,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DisplayButtonActivity"
+            android:name=".DisplayWorkActivity"
             android:label="@string/title_activity_display_button"
             android:parentActivityName=".LoginActivity" >
             <meta-data

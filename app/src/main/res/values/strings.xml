@@ -1,10 +1,8 @@
 <resources>
     <string name="app_name">Ideas Of March App</string>
 
-    <string name="hello_world">Hello world!</string>
-    <string name="baller">LOL BATON</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_display_button">DisplayButtonActivity</string>
+    <string name="title_activity_display_button">Display Assignments</string>
     <string name="title_activity_assignments">Assignments</string>
     <string name="assignments">AssignmentsDue</string>
     <string name="title_activity_buttom">Buttom</string>
