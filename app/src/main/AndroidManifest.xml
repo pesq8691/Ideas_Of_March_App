@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="z.y.x.ideasofmarchapp" >
+    package="z.y.x.ideasofmarchapp"
+   >
 
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <!--Spinner-->
+
 
     <application
         android:allowBackup="true"
@@ -34,6 +38,11 @@
             android:name=".Buttom"
             android:label="@string/title_activity_buttom" >
         </activity>
+
+        <!--Spinner-->
+
+
+
     </application>
 
 </manifest>

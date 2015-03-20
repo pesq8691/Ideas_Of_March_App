@@ -1,5 +1,6 @@
 package z.y.x.ideasofmarchapp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -7,8 +8,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -17,6 +20,8 @@ import com.loopj.android.http.RequestParams;
 
 import org.apache.http.Header;
 import org.json.JSONObject;
+
+//Spinner
 
 //log in activity page
 
@@ -28,9 +33,8 @@ public class LoginActivity extends ActionBarActivity {
     AsyncHttpClient client = new AsyncHttpClient();
     protected String returnString = "";
 
-//    private static final long CONN_MGR_TIMEOUT = 10000;
-//    private static final int CONN_TIMEOUT = 50000;
-//    private static final int SO_TIMEOUT = 50000;
+    //Spinner
+    private ProgressBar spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,10 +46,20 @@ public class LoginActivity extends ActionBarActivity {
         passWord = (EditText) findViewById(R.id.password);
         loginbutton = (Button) findViewById(R.id.btnLogin);
 
+        final InputMethodManager imm = (InputMethodManager)getSystemService(
+                Context.INPUT_METHOD_SERVICE);
+        //Spinner
+        spinner = (ProgressBar)findViewById(R.id.progressBar1);
+        spinner.setVisibility(View.GONE);
 
         loginbutton.setOnClickListener(new View.OnClickListener()
             {
                 public void onClick(View v) {
+
+                    //Spinner
+                    imm.hideSoftInputFromWindow(passWord.getWindowToken(),0);
+                    spinner.setVisibility(View.VISIBLE);
+
                     client.setTimeout(30000);
                     RequestParams params = new RequestParams();
                     params.put("username", userName.getText().toString());
@@ -59,6 +73,7 @@ public class LoginActivity extends ActionBarActivity {
                            Intent i = new Intent(LoginActivity.this, DisplayWorkActivity.class);
                            i.putExtra("JSON", response.toString());
                            startActivity(i);
+                           spinner.setVisibility(View.GONE);
                         }
 
                         @Override
