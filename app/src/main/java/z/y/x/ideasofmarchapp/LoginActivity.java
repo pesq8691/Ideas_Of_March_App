@@ -27,6 +27,11 @@ public class LoginActivity extends ActionBarActivity {
     Button loginbutton;
     AsyncHttpClient client = new AsyncHttpClient();
     protected String returnString = "";
+
+//    private static final long CONN_MGR_TIMEOUT = 10000;
+//    private static final int CONN_TIMEOUT = 50000;
+//    private static final int SO_TIMEOUT = 50000;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +46,7 @@ public class LoginActivity extends ActionBarActivity {
         loginbutton.setOnClickListener(new View.OnClickListener()
             {
                 public void onClick(View v) {
+                    client.setTimeout(30000);
                     RequestParams params = new RequestParams();
                     params.put("username", userName.getText().toString());
                     params.put("password", passWord.getText().toString());
